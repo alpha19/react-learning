@@ -13,8 +13,8 @@ const checkStatus = (response) => {
   throw error;
 }
 
-function getFoods(callback) {
-  return fetch(`${process.env.REACT_APP_API_URL}/food`, {
+const getProducts = (callback) => {
+  fetch(`${process.env.REACT_APP_API_URL}/food`, {
     accept: 'application/json',
   })
   .then(checkStatus)
@@ -22,84 +22,94 @@ function getFoods(callback) {
   .then(callback);
 }
 
-const Food = ({ food }) => {
+const ProductCategoryRow = ({ category }) => {
   return (
     <tr>
-        <td>{food.description}</td>
-        <td>{food.kcal}</td>
-        <td>{food.protein_g}</td>
-        <td>{food.fat_g}</td>
-        <td>{food.carbohydrate_g}</td>
+      <th colSpan="2">
+        {category}
+      </th>
     </tr>
   );
 }
 
-const FoodList = () => {
-  const [foods, setFoods] = useState([]);
+const ProductRow = ({ product }) => {
+  const name = product.stocked ? product.name :
+    <span style={{ color: 'red' }}>
+      {product.name}
+    </span>;
 
-  let search = useRef('');
-  let allFoods = useRef([]);
+  return (
+    <tr>
+      <td>{name}</td>
+      <td>{product.price}</td>
+    </tr>
+  );
+}
 
-  useEffect(() => {
-    getFoods(foods => {
-      allFoods.current = foods;
-      filterFoods();
-    });
-  },[]);
+const ProductTable = ({ products }) => {
+  const rows = [];
+  let lastCategory = null;
 
-  const filterFoods = () => {
-    if (search.current === '')  {
-      setFoods(allFoods.current);
-    } else {
-      setFoods(allFoods.current.filter(food => food.description.includes(search.current)));
+  products.forEach((product) => {
+    if (product.category !== lastCategory) {
+      rows.push(
+        <ProductCategoryRow
+          category={product.category}
+          key={product.category} />
+      );
     }
-  };
-
-  const handleSearchChange = (e) => {
-    search.current = e.target.value; // Might be unnecessary
-    filterFoods();
-  }
-  const foodRows = foods.map((food, key) => {
-      return <Food food={food} key={key} />
+    rows.push(
+      <ProductRow
+        product={product}
+        key={product.name} />
+    );
+    lastCategory = product.category;
   });
 
   return (
-    <>
-      <h1>List of Food</h1>
-      <table>
-        <thead>
-          <tr>
-            <th colSpan='5'>
-              <input
-                type='text'
-                placeholder='Search foods...'
-                value={search.current}
-                onChange={handleSearchChange}
-              />
-            </th>
-          </tr>
-          <tr>
-            <th>Description</th>
-            <th>Kcal</th>
-            <th>Protein (g)</th>
-            <th>Fat (g)</th>
-            <th>Carbs (g)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {foodRows}
-        </tbody>
-      </table>
-    </>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>{rows}</tbody>
+    </table>
+  );
+}
+
+const SearchBar = () => {
+  return (
+    <form>
+      <input type="text" placeholder="Search..." />
+      <label>
+        <input type="checkbox" />
+        {' '}
+        Only show products in stock
+      </label>
+    </form>
+  );
+}
+
+const FilterableProductTable = ({ products }) => {
+  return (
+    <div>
+      <SearchBar />
+      <ProductTable products={products} />
+    </div>
   );
 }
 
 const App = () => {
-  return (
-    <div className='App'>
-      <FoodList />
-    </div>
-  );
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    getProducts(queriedProducts => setProducts(queriedProducts));
+  },[]);
+
+
+  return <FilterableProductTable products={products} />;
 }
 
 export default App;
