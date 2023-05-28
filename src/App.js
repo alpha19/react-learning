@@ -1,136 +1,114 @@
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 
-const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
+import Card from 'react-bootstrap/Card';
+import Carousel from 'react-bootstrap/Carousel';
+import Form from 'react-bootstrap/Form';
+
+const ALBUMS = [
+  {
+    "title": "Scaring the Hoes",
+    "artist": "Scaring the Hoes",
+    "img": "https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/316px-Scaring_the_Hoes.webp.png"
+  },
+  {
+    "title": "10000 gecs",
+    "artist": "100 gecs",
+    "img": "https://upload.wikimedia.org/wikipedia/en/8/8d/10000_gecs_album_cover.jpg"
   }
-  const error = new Error(`HTTP Error ${response.statusText}`);
-  error.status = response.statusText;
-  error.response = response;
-  console.log(error);
-  throw error;
-}
+];
 
-const getProducts = (callback) => {
-  fetch(`${process.env.REACT_APP_API_URL}/food`, {
-    accept: 'application/json',
-  })
-  .then(checkStatus)
-  .then(response => response.json())
-  .then(callback);
-}
-
-const ProductCategoryRow = ({ category }) => {
+const SearchBar = ({ placeholder, filter, onFilterChange }) => {
   return (
-    <tr>
-      <th colSpan="2">
-        {category}
-      </th>
-    </tr>
+    <Form className="SearchBar">
+      <Form.Group className="mb-3">
+        <Form.Label>Album Title</Form.Label>
+        <Form.Control 
+          type="text"
+          value={filter}
+          placeholder={placeholder}
+          onChange= { (e) => onFilterChange(e.target.value) }/>
+      </Form.Group>
+    </Form>
   );
 }
 
-const ProductRow = ({ product }) => {
-  const name = product.stocked ? product.name :
-    <span style={{ color: 'red' }}>
-      {product.name}
-    </span>;
+const Portfolio = ({ albums, titleFilter, artistFilter }) => {
+  const albumCards = [];
 
-  return (
-    <tr>
-      <td>{name}</td>
-      <td>{product.price}</td>
-    </tr>
-  );
-}
+  albums.forEach((album, index) => {
 
-const ProductTable = ({ products, filterText, inStockOnly }) => {
-  const rows = [];
-  let lastCategory = null;
+    if (titleFilter !== "" && 
+        !album.title.toUpperCase().includes(titleFilter.toUpperCase()))
+      return;
+    if (artistFilter !== "" &&
+        !album.artist.toUpperCase().includes(artistFilter.toUpperCase()))
+      return;
 
-  products.forEach((product) => {
-
-    if ((!inStockOnly || product.stocked) &&
-        (filterText === "" || product.name.toUpperCase().includes(filterText.toUpperCase())))
-    {
-      if (product.category !== lastCategory) {
-        rows.push(
-          <ProductCategoryRow
-            category={product.category}
-            key={product.category} />
-        );
-      }
-
-      rows.push(
-        <ProductRow
-          product={product}
-          key={product.name} />
+      albumCards.push(
+        <Carousel.Item key={`${album.title} ${album.artist}`} >
+          <Album
+            album={album}     
+          />
+        </Carousel.Item>
       );
-      lastCategory = product.category;
-    }
   });
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Price</th>
-        </tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </table>
-  );
+  <Carousel variant="dark" slide={false} key={albumCards.length}>
+    {albumCards}
+  </Carousel>);
 }
 
-const SearchBar = ({ filterText, inStockOnly, onFilterTextChange, onInStockOnlyChange }) => {
+const Album = ({ album }) => {
+  console.log(album);
   return (
-    <form>
-      <input
-        type="text"
-        value={filterText}
-        placeholder="Search..."
-        onChange={ (e) => onFilterTextChange(e.target.value) } />
-      <label>
-        <input
-          type="checkbox"
-          onClick={ (e) => onInStockOnlyChange(e.value) } />
-        Only show products in stock
-      </label>
-    </form>
-  );
-}
-
-const FilterableProductTable = ({ products }) => {
-  const [filterText, setFilterText] = useState("");
-  const [inStockOnly, setInStockOnly] = useState(false);
-
-  return (
-    <div>
-      <SearchBar
-        filterText={filterText}
-        inStockOnly={inStockOnly}
-        onFilterTextChange={setFilterText}
-        onInStockOnlyChange={setInStockOnly} />
-      <ProductTable
-        products={products}
-        filterText={filterText}
-        inStockOnly={inStockOnly} />
-    </div>
+    <Card className="Card d-block ">
+      <Card.Img variant="top" src={album.img} />
+      <Card.Body>
+        <Card.Title>{album.title}</Card.Title>
+        <Card.Text>
+          {album.artist}
+        </Card.Text>
+      </Card.Body>
+    </Card>
   );
 }
 
 const App = () => {
+  /*
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     getProducts(queriedProducts => setProducts(queriedProducts));
   },[]);
+  */
 
+  const [titleFilter, setTitleFilter] = useState("");
+  const [artistFilter, setArtistFilter] = useState("");
 
-  return <FilterableProductTable products={products} />;
+  return (
+    <div className>
+      <h1 className="App-header">Albums</h1>
+      <SearchBar
+        placeholder="Search on title..."
+        filter={titleFilter}
+        onFilterChange={setTitleFilter}
+      />
+      <SearchBar
+        placeholder="Search on artist..."
+        filter={artistFilter}
+        onFilterChange={setArtistFilter}
+      />
+      <Portfolio
+        albums={ALBUMS}
+        titleFilter={titleFilter}
+        artistFilter={artistFilter}
+      />
+    </div>
+  );
 }
 
 export default App;
