@@ -1,4 +1,6 @@
 .App {
+  background-color: #f7f7f7;
+  min-height: 80vmin;
   text-align: center;
   padding: 10px;
 }
@@ -20,22 +22,6 @@
   align-items: center;
   justify-content: center;
   font-size: calc(18px + 2vmin);
-}
-
-.SearchBar {
-  display: flex;
-  align-items: left;
-  justify-content: left;
-  font-size: calc(10px + 2vmin);
-}
-
-.Card {
-  margin-bottom: 40px;
-  margin-right: auto;
-  margin-left: auto;
-  display: flex;
-  justify-content: center;
-  width: 18rem;
 }
 
 .App-link {
