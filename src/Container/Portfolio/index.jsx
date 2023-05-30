@@ -10,7 +10,7 @@ const accordionMode = "accordion";
 const filterAlbums = (albums, titleFilter, artistFilter) => {
   const filteredAlbums = [];
 
-  albums.forEach((album) => {
+  albums?.forEach((album) => {
     if (titleFilter !== "" && 
         !album.title.toUpperCase().includes(titleFilter.toUpperCase()))
       return;
