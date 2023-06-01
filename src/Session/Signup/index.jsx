@@ -1,9 +1,12 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+
 import { post } from "../../utilities/api"
 
-const Signup = () => {
+const Signup = ({ setFirstNameTitle }) => {
     const navigate = useNavigate();
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -18,6 +21,7 @@ const Signup = () => {
             } else {
                 localStorage.setItem("user", JSON.stringify(data.user));
                 localStorage.setItem("token", data.jwt);
+                setFirstNameTitle(data.user.first_name);
                 navigate("/");
             }
         };
@@ -39,47 +43,68 @@ const Signup = () => {
 	};
 
     return (
-        <div>
-            <div>Sign Up</div>
-            <form onSubmit={handleSubmit}>
-                <input
+        <Form style={formStyle} onSubmit={handleSubmit}>
+            <Form.Group className="mb-3" controlId="formFirstName">
+                <Form.Label>First Name</Form.Label>
+                <Form.Control
                     type="text"
                     placeholder="First Name"
                     name="firstName"
                     onChange={(e) => setFirstName(e.target.value)}
                     value={firstName}
                 />
-                <input
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formLastName">
+                <Form.Label>Last Name</Form.Label>
+                <Form.Control
                     type="text"
                     placeholder="Last Name"
                     name="lastName"
                     onChange={(e) => setLastName(e.target.value)}
                     value={lastName}
                 />
-                <input
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
                     type="text"
                     placeholder="Email Address"
                     name="email"
                     onChange={(e) => setEmail(e.target.value)}
                     value={email}
                 />
-                <input
+                <Form.Text className="text-muted">
+                    We'll never share your email with anyone else.
+                </Form.Text>
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
                     type="password"
                     placeholder="Password"
                     name="password"
                     onChange={(e) => setPassword(e.target.value)}
-                    value={password}
+                    value={password} 
                 />
-                <button type="submit">Sign Up</button>
-            </form>
-            <div className="alt">
-                Already have an account?{" "}
-                <NavLink to="/login" className="link">
-                    Log in
-                </NavLink>
-            </div>
-        </div>
-    );
+            </Form.Group>
+            <Button style={buttonStyle} variant="primary" type="submit">
+                Submit
+            </Button>
+            <Form.Text>
+            Already have an account?{" "}
+                    <NavLink to="/login" className="link">
+                        Log in
+                    </NavLink>
+            </Form.Text>
+    </Form>
+  );
+}
+
+const formStyle = {
+    margin: "8px",
+  };
+const buttonStyle = {
+    marginRight: "8px",
 }
 
 export default Signup;
