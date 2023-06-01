@@ -11,11 +11,25 @@ const checkStatus = (response) => {
   throw error;
 }
 
-const get = (resource, callback) => {
+const api = (action, resource, props, callback) => {
   fetch(`${process.env.REACT_APP_API_URL}/${resource}`, {
-    accept: 'application/json',
+    method: action,
+    headers: {
+      "content-type": "application/json",
+      accept: "application/json",
+      authorization: localStorage.token
+    },
+    ...props,
   })
   .then(checkStatus)
   .then(response => response.json())
   .then(callback);
+}
+
+export const get = (resource, callback) => {
+  api("GET", resource, {}, callback);
+}
+
+export const post = (resource, body, callback) => {
+  api("POST", resource, {body: JSON.stringify(body)}, callback);
 }
