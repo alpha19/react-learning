@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 
 import { post } from "../../utilities/api"
@@ -28,29 +29,38 @@ const NewAlbum = ({ newAlbumEntry, onNewAlbumEntry }) => {
         <Modal.Title>Add a New Album</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <form>
-                <input
+        <Form style={formStyle}>
+            <Form.Group className="mb-3" controlId="formTitle">
+                <Form.Label>Title</Form.Label>
+                <Form.Control
                     type="text"
                     placeholder="Title"
                     name="title"
                     onChange={(e) => setTitle(e.target.value)}
-                    value={title}
+                    value={title} 
                 />
-                <input
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formArtist">
+                <Form.Label>Artist</Form.Label>
+                <Form.Control
                     type="text"
-                    placeholder="artist"
+                    placeholder="Artist"
                     name="artist"
                     onChange={(e) => setArtist(e.target.value)}
                     value={artist}
                 />
-                <input
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formArtist">
+                <Form.Label>Image</Form.Label>
+                <Form.Control
                     type="text"
                     placeholder="Image Link"
                     name="img"
                     onChange={(e) => setImage(e.target.value)}
                     value={img}
                 />
-            </form>
+            </Form.Group>
+        </Form>
         </Modal.Body>
         <Modal.Footer>
         <Button variant="secondary" onClick={() => onNewAlbumEntry(false)}>
@@ -63,5 +73,9 @@ const NewAlbum = ({ newAlbumEntry, onNewAlbumEntry }) => {
     </Modal>
   );
 }
+
+const formStyle = {
+    margin: "8px",
+  };
 
 export default NewAlbum;
