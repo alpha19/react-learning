@@ -8,7 +8,6 @@ const CarouselPortfolio = ({ filteredAlbums }) => {
     for (let index = 0; index < filteredAlbums.length; index += chunkSize) {
       let cards = [];
       filteredAlbums.slice(index, index + chunkSize).forEach((album) => {
-        console.log()
         cards.push(<AlbumCard key={`${album.title} ${album.artist}`} album={album} />);
       });
       albumCards.push(
