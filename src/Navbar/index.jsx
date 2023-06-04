@@ -7,7 +7,6 @@ import Navbar from 'react-bootstrap/Navbar';
 import Logout from '../Session/Logout';
 
 const MainNav = ({firstName, setFirstName}) => {
-  console.log(firstName)
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   return (
