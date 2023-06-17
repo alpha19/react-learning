@@ -1,6 +1,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 
+import Alert from 'react-bootstrap/Alert';
+import Offcanvas from 'react-bootstrap/Offcanvas';
 import actionCable from 'actioncable'
 
 import ChatInput from './ChatInput'
@@ -8,36 +10,35 @@ import ChatInput from './ChatInput'
 const CableApp = {}
 CableApp.cable = actionCable.createConsumer(`${process.env.REACT_APP_WSS_URL}`)
 
-export const Chat = () => {
+export const Chat = ({ showChat, setShowChat}) => {
     const [messages, setMessages] = useState([])
-    const endMessageRef = useRef(null)  
-  
-    useEffect(() => {
-      endMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-    }, [messages])
 
     useEffect(() => {
       CableApp.cable.subscriptions.create(
         { channel: 'MessagesChannel', },
-        { received: (data) => { setMessages([...messages, data.message]) } }
-      )
+        { received: (data) => {
+          const newMessage = (
+            <Alert key={messages.length}>
+              {data.message.first_name}: {data.message.content}
+            </Alert>
+          );         
+          setMessages([...messages, newMessage]); 
+          } 
+        }
+      );
     }, [CableApp.cable.subscriptions, setMessages, messages])
 
     return (
-    <div>
-        <div>
-          {messages.map((message, index) => {
-            return (            
-              <div key={index}>
-                <p>{message.first_name}: {message.content}</p>
-              </div>                      
-            )
-          })}
-          <div ref={endMessageRef} />
-        </div>
-        <ChatInput messages={messages} setMessages={setMessages} />
-      </div>
-    )
+      <Offcanvas show={showChat} onHide={() => setShowChat(false)}>
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>Chat</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+          {messages}
+          <ChatInput messages={messages} setMessages={setMessages} />
+        </Offcanvas.Body>
+      </Offcanvas>
+    );
   }
   
   export default Chat
