@@ -8,7 +8,6 @@ import Container from '../Container';
 import MainNav from '../Navbar';
 import Login from "../Session/Login";
 import Signup from "../Session/Signup";
-import Chat from '../Chat';
 
 import { get } from "../utilities/api"
 
@@ -40,13 +39,15 @@ const App = () => {
 
   return (
     <div>
-      <MainNav firstName={firstName} setFirstName={setFirstName} />
+      <MainNav
+        firstName={firstName}
+        setFirstName={setFirstName}
+        />
       <Routes>
         <Route exact path="/" element={<Container />} />
         <Route exact path="/login" element={<Login setFirstName={setFirstName} />} />
         <Route exact path="/signup" element={<Signup setFirstNameTitle={setFirstName} />} />
       </Routes>
-      <Chat />
     </div>
   )
 }
