@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 
 import Alert from 'react-bootstrap/Alert';
 import Offcanvas from 'react-bootstrap/Offcanvas';
@@ -17,6 +17,7 @@ export const Chat = ({ showChat, setShowChat}) => {
       CableApp.cable.subscriptions.create(
         { channel: 'MessagesChannel', },
         { received: (data) => {
+          console.log("Received..")
           const newMessage = (
             <Alert key={messages.length}>
               {data.message.first_name}: {data.message.content}
@@ -26,7 +27,7 @@ export const Chat = ({ showChat, setShowChat}) => {
           } 
         }
       );
-    }, [CableApp.cable.subscriptions, setMessages, messages])
+    }, [setMessages, messages])
 
     return (
       <Offcanvas show={showChat} onHide={() => setShowChat(false)}>
@@ -35,7 +36,7 @@ export const Chat = ({ showChat, setShowChat}) => {
         </Offcanvas.Header>
         <Offcanvas.Body>
           {messages}
-          <ChatInput messages={messages} setMessages={setMessages} />
+          <ChatInput />
         </Offcanvas.Body>
       </Offcanvas>
     );

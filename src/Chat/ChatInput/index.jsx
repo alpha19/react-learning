@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 
 import { post } from "../../utilities/api"
 
-const ChatInput = ({ messages, setMessages })  => {
+const ChatInput = ()  => {
   const [chatInput, setChatInput] = useState('')
 
   const handleSubmit = (e) => {

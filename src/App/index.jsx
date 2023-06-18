@@ -19,23 +19,23 @@ const App = () => {
   const [firstName, setFirstName] = useState();
   const navigate = useNavigate();
 
-  const fetchUser = () => {
-    const callback = (data) => {
-        if (data.error) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            navigate("/login");
-        }
-        
-        setFirstName(data.first_name);
-    };
-  
-    get("authorized", callback);
-  };
-
   useEffect(() => {
+    const fetchUser = () => {
+      const callback = (data) => {
+          if (data.error) {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              navigate("/login");
+          }
+          
+          setFirstName(data.first_name);
+      };
+    
+      get("authorized", callback);
+    };
+
     fetchUser();
-  },[firstName]);
+  },[firstName, navigate]);
 
   return (
     <div>
