@@ -5,13 +5,16 @@ import Form from 'react-bootstrap/Form';
 
 import { post } from "../../utilities/api"
 
-const ChatInput = ()  => {
+const ChatInput = ({ messages, setMessages })  => {
   const [chatInput, setChatInput] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const callback = (data) => { setChatInput('') };
+    const callback = (data) => {
+      setChatInput('') 
+      setMessages([...messages, data.message]);
+    };
     post("message/publish", { message: {content: chatInput}}, callback); 
   };
   return (

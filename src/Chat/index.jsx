@@ -16,18 +16,18 @@ export const Chat = ({ showChat, setShowChat}) => {
     useEffect(() => {
       CableApp.cable.subscriptions.create(
         { channel: 'MessagesChannel', },
-        { received: (data) => {
-          console.log("Received..")
-          const newMessage = (
-            <Alert key={messages.length}>
-              {data.message.first_name}: {data.message.content}
-            </Alert>
-          );         
-          setMessages([...messages, newMessage]); 
+        { received: (data) => { 
+          setMessages([...messages, data.message]); 
           } 
         }
       );
-    }, [setMessages, messages])
+    }, [messages]);
+
+    const messageElements = messages.map((message, index) => (
+      <Alert key={index}>
+        {message.first_name}: {message.content}
+      </Alert>
+    ));
 
     return (
       <Offcanvas show={showChat} onHide={() => setShowChat(false)}>
@@ -35,8 +35,8 @@ export const Chat = ({ showChat, setShowChat}) => {
           <Offcanvas.Title>Chat</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          {messages}
-          <ChatInput />
+          {messageElements}
+          <ChatInput messages={messages} setMessages={setMessages} />
         </Offcanvas.Body>
       </Offcanvas>
     );
