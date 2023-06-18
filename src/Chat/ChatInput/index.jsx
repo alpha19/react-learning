@@ -33,18 +33,6 @@ const ChatInput = ({ messages, setMessages })  => {
       </Button>
     </>
   );
-  return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <textarea 
-          name="chat_input" 
-          value={chatInput}
-          rows="2"
-          onChange={(e) => setChatInput(e.target.value)} />
-        <button>Send</button>
-      </form>
-    </div>
-  )
 }
 
 export default ChatInput
